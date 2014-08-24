@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">아이와 함께</string>
+    <string name="title_section_sangsang">상상어린이공원</string>
+    <string name="title_section_toy">장난감도서관</string>
+    <string name="title_section_han_river">한강놀이터</string>
+    <string name="title_section_nearby">내주변놀이터</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
