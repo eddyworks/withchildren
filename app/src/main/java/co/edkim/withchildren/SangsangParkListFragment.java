@@ -1,7 +1,9 @@
 package co.edkim.withchildren;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,11 +16,14 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import co.edkim.withchildren.helper.NetHelper;
+import co.edkim.withchildren.model.Park;
 
 
 /**
@@ -90,22 +95,25 @@ public class SangsangParkListFragment extends Fragment {
                 String addr = p.getString("P_ADDR");
                 String gu = addr.split(" ")[2];
                 String dong = addr.split(" ")[3];
+                String keyName = "(" + dong + ") " + p.getString("P_PARK");
                 if (districts.contains(gu)) {
                     ArrayList<String> parkByGu = parks.get(districts.indexOf(gu));
                     if (parkByGu == null)
                         parkByGu = new ArrayList<String>();
 
-                    parkByGu.add("(" + dong + ") " + p.getString("P_PARK"));
+                    parkByGu.add(keyName);
                 } else {
                     districts.add(gu);
                     ArrayList<String> parkByGu = new ArrayList<String>();
-                    parkByGu.add("(" + dong + ") " + p.getString("P_PARK"));
+                    parkByGu.add(keyName);
                     parks.add(parkByGu);
                 }
+
+                parkSet.put(keyName, new Park(keyName, p.getString("P_PARK"), addr, p.getString("P_LIST_CONTENT")));
             }
 
             Collections.sort(districts);
-            for(int i = 0; i < parks.size(); i++){
+            for (int i = 0; i < parks.size(); i++) {
                 Collections.sort(parks.get(i));
             }
         } catch (JSONException e) {
@@ -120,6 +128,7 @@ public class SangsangParkListFragment extends Fragment {
 
     private static ArrayList<String> districts = new ArrayList<String>();
     private static ArrayList<ArrayList<String>> parks = new ArrayList<ArrayList<String>>();
+    public static HashMap<String, Park> parkSet = new HashMap<String, Park>();
 
     //https://gist.github.com/bowmanb/4052030 bowmanb 씨의 공개 코드 참고.
     public class ParkListAdapter extends BaseExpandableListAdapter {
@@ -184,10 +193,31 @@ public class SangsangParkListFragment extends Fragment {
 
         @Override
         public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
-            TextView textView = new TextView(SangsangParkListFragment.this.getActivity());
+            final TextView textView = new TextView(SangsangParkListFragment.this.getActivity());
             textView.setText(getChild(i, i1).toString());
             textView.setTextSize(14);
             textView.setPadding(100, 20, 0, 20);
+            //http://maps.googleapis.com/maps/api/geocode/json?address=%EC%A2%85%EB%A1%9C%EA%B5%AC%20%EC%97%B0%EC%A7%80%EB%8F%99%20136-92
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder alertDlg = new AlertDialog.Builder(
+                            getActivity());
+                    alertDlg.setTitle("공원 상세 정보");
+                    String content = Jsoup.parse(parkSet.get(textView.getText()).content).text();
+                    alertDlg.setMessage(content);
+                    alertDlg.setPositiveButton("닫기",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+
+                                }
+                            });
+                    alertDlg.show();
+                }
+            });
+
             return textView;
         }
 
