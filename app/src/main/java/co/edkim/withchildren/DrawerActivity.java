@@ -1,17 +1,19 @@
 package co.edkim.withchildren;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
+
+import co.edkim.withchildren.helper.NetHelper;
 
 
 public class DrawerActivity extends Activity
@@ -36,10 +38,23 @@ public class DrawerActivity extends Activity
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+        if (NetHelper.isOnline(this)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                            .permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+
+                    // Set up the drawer.
+                    mNavigationDrawerFragment.setUp(
+                            R.id.navigation_drawer,
+                            (DrawerLayout) findViewById(R.id.drawer_layout));
+                }
+            });
+        } else {
+//            alertRequiresInternet(this);
+        }
     }
 
     @Override
@@ -55,6 +70,9 @@ public class DrawerActivity extends Activity
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section_sangsang);
+                Fragment fragment = new SangsangParkListFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
                 break;
             case 2:
                 mTitle = getString(R.string.title_section_toy);
@@ -128,7 +146,7 @@ public class DrawerActivity extends Activity
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_drawer, container, false);
             return rootView;
         }
