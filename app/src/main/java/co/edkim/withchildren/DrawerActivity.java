@@ -21,8 +21,7 @@ import co.edkim.withchildren.helper.NetHelper;
 
 
 public class DrawerActivity extends Activity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, SangsangParkDetailsFragment.OnFragmentInteractionListener
-{
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, SangsangParkDetailsFragment.OnFragmentInteractionListener, ToyLibDetailsFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -33,7 +32,6 @@ public class DrawerActivity extends Activity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-
 
 
     @Override
@@ -76,15 +74,16 @@ public class DrawerActivity extends Activity
     }
 
     public void onSectionAttached(int number) {
+        Fragment fragment = null;
+        FragmentManager fragmentManager = getFragmentManager();
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section_sangsang);
-                Fragment fragment = new SangsangParkListFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+                fragment = new SangsangParkListFragment();
                 break;
             case 2:
                 mTitle = getString(R.string.title_section_toy);
+                fragment = new ToyLibListFragment();
                 break;
             case 3:
                 mTitle = getString(R.string.title_section_han_river);
@@ -93,6 +92,9 @@ public class DrawerActivity extends Activity
                 mTitle = getString(R.string.title_section_nearby);
                 break;
         }
+
+        if (fragment != null)
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
     }
 
     public void restoreActionBar() {

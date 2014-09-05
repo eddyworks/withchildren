@@ -1,9 +1,9 @@
 package co.edkim.withchildren;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,24 +13,21 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.plus.PlusOneButton;
 
 import co.edkim.withchildren.model.Park;
 
 /**
  * A fragment with a Google +1 button.
  * Activities that contain this fragment must implement the
- * {@link SangsangParkDetailsFragment.OnFragmentInteractionListener} interface
+ * {@link co.edkim.withchildren.ToyLibDetailsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SangsangParkDetailsFragment#newInstance} factory method to
+ * Use the {@link co.edkim.withchildren.ToyLibDetailsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SangsangParkDetailsFragment extends Fragment {
+public class ToyLibDetailsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -53,15 +50,15 @@ public class SangsangParkDetailsFragment extends Fragment {
      * @return A new instance of fragment SangsangParkDetailsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SangsangParkDetailsFragment newInstance(String param1) {
-        SangsangParkDetailsFragment fragment = new SangsangParkDetailsFragment();
+    public static ToyLibDetailsFragment newInstance(String param1) {
+        ToyLibDetailsFragment fragment = new ToyLibDetailsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public SangsangParkDetailsFragment() {
+    public ToyLibDetailsFragment() {
         // Required empty public constructor
     }
 
@@ -79,7 +76,7 @@ public class SangsangParkDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_sangsang_park_details, container, false);
+        View view = inflater.inflate(R.layout.fragment_toy_lib_details, container, false);
 
         adView = (AdView) view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
@@ -89,7 +86,7 @@ public class SangsangParkDetailsFragment extends Fragment {
         // Start loading the ad in the background.
         adView.loadAd(adRequest);
 
-        Park p = SangsangParkListFragment.parkSet.get(mParam1);
+        Park p = ToyLibListFragment.libSet.get(mParam1);
 
         TextView textViewName = (TextView) view.findViewById(R.id.textViewName);
         textViewName.setText(p.name);

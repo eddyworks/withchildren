@@ -1,11 +1,8 @@
 package co.edkim.withchildren;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,7 +18,6 @@ import com.google.android.gms.ads.AdView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,14 +29,14 @@ import co.edkim.withchildren.model.Park;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link android.app.Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SangsangParkListFragment.OnFragmentInteractionListener} interface
+ * {@link co.edkim.withchildren.ToyLibListFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SangsangParkListFragment#newInstance} factory method to
+ * Use the {@link co.edkim.withchildren.ToyLibListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SangsangParkListFragment extends Fragment {
+public class ToyLibListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -54,8 +50,6 @@ public class SangsangParkListFragment extends Fragment {
 
     private AdView adView;
 
-    ProgressDialog dialog;
-
     /* Your ad unit id. Replace with your actual ad unit id. */
     private static final String AD_UNIT_ID = "ca-app-pub-6787467391542523/1310511092";
 
@@ -68,8 +62,8 @@ public class SangsangParkListFragment extends Fragment {
      * @return A new instance of fragment SangsangParkListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SangsangParkListFragment newInstance(String param1, String param2) {
-        SangsangParkListFragment fragment = new SangsangParkListFragment();
+    public static ToyLibListFragment newInstance(String param1, String param2) {
+        ToyLibListFragment fragment = new ToyLibListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -77,7 +71,7 @@ public class SangsangParkListFragment extends Fragment {
         return fragment;
     }
 
-    public SangsangParkListFragment() {
+    public ToyLibListFragment() {
         // Required empty public constructor
     }
 
@@ -95,7 +89,7 @@ public class SangsangParkListFragment extends Fragment {
                              Bundle savedInstanceState) {
         //7a565a674e6c737738336f7072776b 서울시 발급 키
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_sangsang_park_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_toy_lib_list, container, false);
 
         adView = (AdView) v.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
@@ -105,25 +99,22 @@ public class SangsangParkListFragment extends Fragment {
         // Start loading the ad in the background.
         adView.loadAd(adRequest);
 
-        if (parkSet.size() == 0) {
+        if (libSet.size() == 0) {
             getActivity().runOnUiThread(new Runnable() {
-
                 @Override
                 public void run() {
-                    String data = NetHelper.SendRESTRequest(getActivity(), "http://webappwithchildren.azurewebsites.net/api/DParks");
                     try {
-                        JSONArray oPack = new JSONArray(data);
-                        //{"ListDreamParksService":{"list_total_count":304,"RESULT":{"CODE":"INFO-000","MESSAGE":"정상 처리되었습니다"},"row":[{"P_PARK":"연지 상상어린이공원","P_LIST_CONTENT":"
+                        JSONArray oPack = new JSONObject(Master.jsonToyLocation).getJSONArray("DATA");
 
                         for (int i = 0; i < oPack.length(); i++) {
                             JSONObject p = oPack.getJSONObject(i);
-                            String gu = p.getString("Gu");
-                            String dong = p.getString("Dong");
-                            String keyName = "(" + dong + ") " + p.getString("Name");
+                            String gu = p.getString("ADDR_GU");
+                            String dong = p.getString("ADDR_RD_NM");
+                            String keyName = "(" + dong + ") " + p.getString("LIB_NM");
                             if (districts.contains(gu)) {
                                 ArrayList<String> parkByGu = parks.get(districts.indexOf(gu));
-                                /*if (parkByGu == null)
-                                    parkByGu = new ArrayList<String>();*/
+                                if (parkByGu == null)
+                                    parkByGu = new ArrayList<String>();
 
                                 parkByGu.add(keyName);
                             } else {
@@ -133,7 +124,7 @@ public class SangsangParkListFragment extends Fragment {
                                 parks.add(parkByGu);
                             }
 
-                            parkSet.put(keyName, new Park(keyName, p.getString("Name"), p.getString("FullAddress"), p.getString("Content"), gu, dong, p.getInt("DParkId")));
+                            libSet.put(keyName, new Park(keyName, p.getString("LIB_NM"), p.getString("ADDR_RD"), p.getString("WEBSITE") + "\n" + p.getString("TEL"), gu, dong, p.getInt("IDX")));
                         }
 
                         //Collections.sort(districts);
@@ -154,7 +145,7 @@ public class SangsangParkListFragment extends Fragment {
 
     private static ArrayList<String> districts = new ArrayList<String>();
     private static ArrayList<ArrayList<String>> parks = new ArrayList<ArrayList<String>>();
-    public static HashMap<String, Park> parkSet = new HashMap<String, Park>();
+    public static HashMap<String, Park> libSet = new HashMap<String, Park>();
 
     //https://gist.github.com/bowmanb/4052030 bowmanb 씨의 공개 코드 참고.
     public class ParkListAdapter extends BaseExpandableListAdapter {
@@ -210,7 +201,7 @@ public class SangsangParkListFragment extends Fragment {
 
         @Override
         public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-            TextView textView = new TextView(SangsangParkListFragment.this.getActivity());
+            TextView textView = new TextView(ToyLibListFragment.this.getActivity());
             textView.setText(getGroup(i).toString());
             textView.setTextSize(15);
             textView.setPadding(70, 20, 0, 20);
@@ -220,7 +211,7 @@ public class SangsangParkListFragment extends Fragment {
         @Override
         public View getChildView(final int i, final int i1, boolean b, View view, ViewGroup viewGroup) {
             final String keyName = getChild(i, i1).toString();
-            final TextView textView = new TextView(SangsangParkListFragment.this.getActivity());
+            final TextView textView = new TextView(ToyLibListFragment.this.getActivity());
             textView.setText(keyName);
             textView.setTextSize(15);
             textView.setPadding(100, 20, 0, 20);
@@ -229,13 +220,13 @@ public class SangsangParkListFragment extends Fragment {
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Fragment fragment = SangsangParkDetailsFragment.newInstance(keyName);
+                    Fragment fragment = ToyLibDetailsFragment.newInstance(keyName);
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(null).commit();
                     /*AlertDialog.Builder alertDlg = new AlertDialog.Builder(
                             getActivity());
                     alertDlg.setTitle("공원 상세 정보");
-                    String content = Jsoup.parse(parkSet.get(textView.getText()).content).text();
+                    String content = Jsoup.parse(libSet.get(textView.getText()).content).text();
                     alertDlg.setMessage(content);
                     alertDlg.setPositiveButton("닫기",
                             new DialogInterface.OnClickListener() {
