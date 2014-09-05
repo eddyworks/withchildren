@@ -3,6 +3,7 @@ package co.edkim.withchildren;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,9 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +50,10 @@ public class SangsangParkListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private AdView adView;
+
+    /* Your ad unit id. Replace with your actual ad unit id. */
+    private static final String AD_UNIT_ID = "ca-app-pub-6787467391542523/1310511092";
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -84,18 +92,25 @@ public class SangsangParkListFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_sangsang_park_list, container, false);
 
-        String data = NetHelper.SendRESTRequest(getActivity(), "http://openapi.seoul.go.kr:8088/7a565a674e6c737738336f7072776b/json/ListDreamParksService/1/400/"); //넉넉하게 400번까지
-        try {
-            JSONObject oPack = new JSONObject(data);
-            //{"ListDreamParksService":{"list_total_count":304,"RESULT":{"CODE":"INFO-000","MESSAGE":"정상 처리되었습니다"},"row":[{"P_PARK":"연지 상상어린이공원","P_LIST_CONTENT":"
-            JSONArray list = oPack.getJSONObject("ListDreamParksService").getJSONArray("row");
+        adView = (AdView) v.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("7DDD06BDE922F9125E7B97721D387C5C").build();
 
-            for (int i = 0; i < list.length(); i++) {
-                JSONObject p = list.getJSONObject(i);
-                String addr = p.getString("P_ADDR");
-                String gu = addr.split(" ")[2];
-                String dong = addr.split(" ")[3];
-                String keyName = "(" + dong + ") " + p.getString("P_PARK");
+        // Start loading the ad in the background.
+        adView.loadAd(adRequest);
+
+        String data = NetHelper.SendRESTRequest(getActivity(), "http://webappwithchildren.azurewebsites.net/api/DParks");
+        try {
+            JSONArray oPack = new JSONArray(data);
+            //{"ListDreamParksService":{"list_total_count":304,"RESULT":{"CODE":"INFO-000","MESSAGE":"정상 처리되었습니다"},"row":[{"P_PARK":"연지 상상어린이공원","P_LIST_CONTENT":"
+
+            for (int i = 0; i < oPack.length(); i++) {
+                JSONObject p = oPack.getJSONObject(i);
+                String addr = p.getString("Address");
+                String gu = p.getString("Gu");
+                String dong = p.getString("Dong");
+                String keyName = "(" + dong + ") " + p.getString("Name");
                 if (districts.contains(gu)) {
                     ArrayList<String> parkByGu = parks.get(districts.indexOf(gu));
                     if (parkByGu == null)
@@ -109,7 +124,7 @@ public class SangsangParkListFragment extends Fragment {
                     parks.add(parkByGu);
                 }
 
-                parkSet.put(keyName, new Park(keyName, p.getString("P_PARK"), addr, p.getString("P_LIST_CONTENT")));
+                parkSet.put(keyName, new Park(keyName, p.getString("Name"), p.getString("FullAddress"), p.getString("Content"), gu, dong, p.getInt("DParkId")));
             }
 
             Collections.sort(districts);
@@ -192,9 +207,10 @@ public class SangsangParkListFragment extends Fragment {
         }
 
         @Override
-        public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
+        public View getChildView(final int i, final int i1, boolean b, View view, ViewGroup viewGroup) {
+            final String keyName = getChild(i, i1).toString();
             final TextView textView = new TextView(SangsangParkListFragment.this.getActivity());
-            textView.setText(getChild(i, i1).toString());
+            textView.setText(keyName);
             textView.setTextSize(14);
             textView.setPadding(100, 20, 0, 20);
             //http://maps.googleapis.com/maps/api/geocode/json?address=%EC%A2%85%EB%A1%9C%EA%B5%AC%20%EC%97%B0%EC%A7%80%EB%8F%99%20136-92
@@ -202,7 +218,10 @@ public class SangsangParkListFragment extends Fragment {
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder alertDlg = new AlertDialog.Builder(
+                    Fragment fragment = SangsangParkDetailsFragment.newInstance(keyName);
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(null).commit();
+                    /*AlertDialog.Builder alertDlg = new AlertDialog.Builder(
                             getActivity());
                     alertDlg.setTitle("공원 상세 정보");
                     String content = Jsoup.parse(parkSet.get(textView.getText()).content).text();
@@ -214,7 +233,7 @@ public class SangsangParkListFragment extends Fragment {
 
                                 }
                             });
-                    alertDlg.show();
+                    alertDlg.show();*/
                 }
             });
 
