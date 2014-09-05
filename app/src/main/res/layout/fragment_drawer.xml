@@ -13,6 +13,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="false"
-        android:text="abc" />
+        android:text="곧 서비스 예정입니다." />
 
 </RelativeLayout>

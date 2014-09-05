@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.plus.PlusOneButton;
 
 import co.edkim.withchildren.model.Park;
@@ -38,7 +41,7 @@ public class SangsangParkDetailsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private AdView adView;
-
+    private GoogleMap map;
     /* Your ad unit id. Replace with your actual ad unit id. */
     private static final String AD_UNIT_ID = "ca-app-pub-6787467391542523/1310511092";
 
@@ -68,6 +71,8 @@ public class SangsangParkDetailsFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
         }
+
+
     }
 
     @Override
@@ -89,8 +94,8 @@ public class SangsangParkDetailsFragment extends Fragment {
         TextView textViewName = (TextView) view.findViewById(R.id.textViewName);
         textViewName.setText(p.name);
 
-        TextView textViewAddress = (TextView) view.findViewById(R.id.textViewAddress);
-        textViewAddress.setText(p.address);
+        /*TextView textViewAddress = (TextView) view.findViewById(R.id.textViewAddress);
+        textViewAddress.setText(p.address);*/
 
         RatingBar ratingBar = (RatingBar) view.findViewById(R.id.ratingBar);
         ratingBar.setIsIndicator(true);
@@ -106,9 +111,13 @@ public class SangsangParkDetailsFragment extends Fragment {
         textViewContent.setText(p.content);
         textViewContent.setLineSpacing(9, 1);
 
+        WebView webView = (WebView) view.findViewById(R.id.webView);
+        webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl("https://maps.google.co.kr/maps?q=" + p.address + "&output=classic&dg=ntvb");
+
         return view;
     }
-
 
     @Override
     public void onResume() {

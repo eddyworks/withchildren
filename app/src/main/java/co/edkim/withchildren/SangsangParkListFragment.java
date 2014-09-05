@@ -100,41 +100,42 @@ public class SangsangParkListFragment extends Fragment {
         // Start loading the ad in the background.
         adView.loadAd(adRequest);
 
-        String data = NetHelper.SendRESTRequest(getActivity(), "http://webappwithchildren.azurewebsites.net/api/DParks");
-        try {
-            JSONArray oPack = new JSONArray(data);
-            //{"ListDreamParksService":{"list_total_count":304,"RESULT":{"CODE":"INFO-000","MESSAGE":"정상 처리되었습니다"},"row":[{"P_PARK":"연지 상상어린이공원","P_LIST_CONTENT":"
+        if (parkSet.size() == 0) {
+            String data = NetHelper.SendRESTRequest(getActivity(), "http://webappwithchildren.azurewebsites.net/api/DParks");
+            try {
+                JSONArray oPack = new JSONArray(data);
+                //{"ListDreamParksService":{"list_total_count":304,"RESULT":{"CODE":"INFO-000","MESSAGE":"정상 처리되었습니다"},"row":[{"P_PARK":"연지 상상어린이공원","P_LIST_CONTENT":"
 
-            for (int i = 0; i < oPack.length(); i++) {
-                JSONObject p = oPack.getJSONObject(i);
-                String addr = p.getString("Address");
-                String gu = p.getString("Gu");
-                String dong = p.getString("Dong");
-                String keyName = "(" + dong + ") " + p.getString("Name");
-                if (districts.contains(gu)) {
-                    ArrayList<String> parkByGu = parks.get(districts.indexOf(gu));
-                    if (parkByGu == null)
-                        parkByGu = new ArrayList<String>();
+                for (int i = 0; i < oPack.length(); i++) {
+                    JSONObject p = oPack.getJSONObject(i);
+                    String addr = p.getString("Address");
+                    String gu = p.getString("Gu");
+                    String dong = p.getString("Dong");
+                    String keyName = "(" + dong + ") " + p.getString("Name");
+                    if (districts.contains(gu)) {
+                        ArrayList<String> parkByGu = parks.get(districts.indexOf(gu));
+                        if (parkByGu == null)
+                            parkByGu = new ArrayList<String>();
 
-                    parkByGu.add(keyName);
-                } else {
-                    districts.add(gu);
-                    ArrayList<String> parkByGu = new ArrayList<String>();
-                    parkByGu.add(keyName);
-                    parks.add(parkByGu);
+                        parkByGu.add(keyName);
+                    } else {
+                        districts.add(gu);
+                        ArrayList<String> parkByGu = new ArrayList<String>();
+                        parkByGu.add(keyName);
+                        parks.add(parkByGu);
+                    }
+
+                    parkSet.put(keyName, new Park(keyName, p.getString("Name"), p.getString("FullAddress"), p.getString("Content"), gu, dong, p.getInt("DParkId")));
                 }
 
-                parkSet.put(keyName, new Park(keyName, p.getString("Name"), p.getString("FullAddress"), p.getString("Content"), gu, dong, p.getInt("DParkId")));
+                Collections.sort(districts);
+                for (int i = 0; i < parks.size(); i++) {
+                    Collections.sort(parks.get(i));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            Collections.sort(districts);
-            for (int i = 0; i < parks.size(); i++) {
-                Collections.sort(parks.get(i));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-
 
         ExpandableListView elv = (ExpandableListView) v.findViewById(R.id.listPark);
         elv.setAdapter(new ParkListAdapter());

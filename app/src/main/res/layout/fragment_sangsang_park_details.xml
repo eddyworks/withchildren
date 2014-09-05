@@ -19,34 +19,49 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_gravity="top"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="12dp">
+                android:layout_gravity="top">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Medium Text"
-                    android:id="@+id/textViewName"
-                    android:layout_marginBottom="12dp"
-                    android:textSize="20dp" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="#7f7f7f"
+                    android:paddingTop="7dp"
+                    android:paddingRight="9dp"
+                    android:paddingBottom="7dp"
+                    android:paddingLeft="9dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/textViewAddress"
-                    android:textColor="@color/common_signin_btn_light_text_default"
-                    android:layout_marginBottom="10dp"
-                    android:textSize="16dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Medium Text"
+                        android:id="@+id/textViewName"
+                        android:textSize="18dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:textColor="#fff" />
 
-                <RatingBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ratingBar"
+                    <RatingBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ratingBar"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:layout_gravity="center_vertical|right" />
+                </LinearLayout>
+
+
+                <!--
+                <fragment
+                    android:id="@+id/map"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    class="com.google.android.gms.maps.MapFragment" />-->
+
+                <WebView
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp"
+                    android:id="@+id/webView"
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
@@ -54,11 +69,14 @@
                     android:layout_height="wrap_content"
                     android:text="Medium Text"
                     android:id="@+id/textViewContent"
-                    android:textColor="@color/common_signin_btn_light_text_default"
+                    android:textColor="#7f7f7f"
                     android:layout_marginBottom="10dp"
                     android:autoText="true"
                     android:autoLink="phone|email|map|web"
-                    android:textSize="16dp" />
+                    android:textSize="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="7dp" />
 
 
             </LinearLayout>
