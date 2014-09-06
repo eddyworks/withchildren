@@ -21,7 +21,8 @@ import co.edkim.withchildren.helper.NetHelper;
 
 
 public class DrawerActivity extends Activity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, SangsangParkDetailsFragment.OnFragmentInteractionListener, ToyLibDetailsFragment.OnFragmentInteractionListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, SangsangParkDetailsFragment.OnFragmentInteractionListener
+        , ToyLibDetailsFragment.OnFragmentInteractionListener, HanRiverFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -87,6 +88,7 @@ public class DrawerActivity extends Activity
                 break;
             case 3:
                 mTitle = getString(R.string.title_section_han_river);
+                fragment = new HanRiverFragment();
                 break;
             case 4:
                 mTitle = getString(R.string.title_section_nearby);
