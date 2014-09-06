@@ -1,6 +1,8 @@
 package co.edkim.withchildren;
 
 import android.app.Activity;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -16,9 +18,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.plus.PlusOneButton;
+
+import java.io.IOException;
+import java.util.List;
 
 import co.edkim.withchildren.model.Park;
 
@@ -41,7 +51,7 @@ public class SangsangParkDetailsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private AdView adView;
-    private GoogleMap map;
+    MapFragment map;
     /* Your ad unit id. Replace with your actual ad unit id. */
     private static final String AD_UNIT_ID = "ca-app-pub-6787467391542523/1310511092";
 
@@ -89,6 +99,9 @@ public class SangsangParkDetailsFragment extends Fragment {
         // Start loading the ad in the background.
         adView.loadAd(adRequest);
 
+        map = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        GoogleMap iMap = map.getMap();
+
         Park p = SangsangParkListFragment.parkSet.get(mParam1);
 
         TextView textViewName = (TextView) view.findViewById(R.id.textViewName);
@@ -110,11 +123,31 @@ public class SangsangParkDetailsFragment extends Fragment {
         TextView textViewContent = (TextView) view.findViewById(R.id.textViewContent);
         textViewContent.setText(p.content);
         textViewContent.setLineSpacing(9, 1);
+        textViewContent.setTextIsSelectable(true);
+        textViewContent.setCursorVisible(false);
 
-        WebView webView = (WebView) view.findViewById(R.id.webView);
-        webView.setWebViewClient(new WebViewClient());
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("https://maps.google.co.kr/maps?q=" + p.address + "&output=classic&dg=ntvb");
+        Geocoder geocoder = new Geocoder(getActivity());
+        List<Address> addresses = null;
+        try {
+            addresses = geocoder.getFromLocationName(p.address, 5);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (addresses != null && addresses.size() > 0) {
+            LatLng sLatLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
+
+            iMap.addMarker(new MarkerOptions()
+                    .position(sLatLng)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+
+            CameraUpdate center =
+                    CameraUpdateFactory.newLatLng(sLatLng);
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(14);
+
+            iMap.moveCamera(center);
+            iMap.animateCamera(zoom);
+        }
 
         return view;
     }

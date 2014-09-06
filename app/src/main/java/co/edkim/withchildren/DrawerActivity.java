@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -76,7 +77,7 @@ public class DrawerActivity extends Activity
 
     public void onSectionAttached(int number) {
         Fragment fragment = null;
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fm = getFragmentManager();
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section_sangsang);
@@ -95,8 +96,14 @@ public class DrawerActivity extends Activity
                 break;
         }
 
-        if (fragment != null)
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+        if (fragment != null) {
+            Fragment map = fm.findFragmentById(R.id.map);
+            FragmentTransaction t = fm.beginTransaction();
+            if (map != null) {
+                t.remove(map);
+            }
+            t.replace(R.id.container, fragment).commit();
+        }
     }
 
     public void restoreActionBar() {

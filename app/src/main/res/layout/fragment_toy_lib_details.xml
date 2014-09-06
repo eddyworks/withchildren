@@ -40,6 +40,7 @@
                         android:textSize="18dp"
                         android:layout_gravity="center_vertical"
                         android:layout_weight="1"
+                        android:longClickable="true"
                         android:textColor="#fff" />
 
                     <RatingBar
@@ -50,19 +51,11 @@
                         android:layout_gravity="center_vertical|right" />
                 </LinearLayout>
 
-
-                <!--
                 <fragment
                     android:id="@+id/map"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    class="com.google.android.gms.maps.MapFragment" />-->
-
-                <WebView
-                    android:layout_width="match_parent"
                     android:layout_height="240dp"
-                    android:id="@+id/webView"
-                    android:layout_gravity="center_horizontal" />
+                    class="com.google.android.gms.maps.MapFragment" />
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -50,19 +50,11 @@
                         android:layout_gravity="center_vertical|right" />
                 </LinearLayout>
 
-
-                <!--
                 <fragment
                     android:id="@+id/map"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    class="com.google.android.gms.maps.MapFragment" />-->
-
-                <WebView
-                    android:layout_width="match_parent"
                     android:layout_height="240dp"
-                    android:id="@+id/webView"
-                    android:layout_gravity="center_horizontal" />
+                    class="com.google.android.gms.maps.MapFragment" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -74,6 +66,7 @@
                     android:autoText="true"
                     android:autoLink="phone|email|map|web"
                     android:textSize="15dp"
+                    android:longClickable="true"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="7dp" />

@@ -111,6 +111,8 @@ public class ToyLibListFragment extends Fragment {
                             String gu = p.getString("ADDR_GU");
                             String dong = p.getString("ADDR_RD_NM");
                             String keyName = "(" + dong + ") " + p.getString("LIB_NM");
+                            //ADDR_GU":"구","ADDR_RD_NM":"도로명","ADDR_RD_NO":"도로명 번호","ADDR_RD_BNO":"건물번호"
+                            String address = p.getString("ADDR_GU") + " " + p.getString("ADDR_RD_NM") + " " + p.getString("ADDR_RD_NO") + " " + p.getString("ADDR_RD_BNO");
                             if (districts.contains(gu)) {
                                 ArrayList<String> parkByGu = parks.get(districts.indexOf(gu));
                                 if (parkByGu == null)
@@ -124,7 +126,24 @@ public class ToyLibListFragment extends Fragment {
                                 parks.add(parkByGu);
                             }
 
-                            libSet.put(keyName, new Park(keyName, p.getString("LIB_NM"), p.getString("ADDR_RD"), p.getString("WEBSITE") + "\n" + p.getString("TEL"), gu, dong, p.getInt("IDX")));
+                            StringBuilder sb = new StringBuilder();
+                            if (p.getString("TEL").length() > 0) {
+                                sb.append("전화 : ");
+                                sb.append(p.getString("TEL"));
+                                sb.append("\n");
+                            }
+                            if (p.getString("ADDR_RD").length() > 0) {
+                                sb.append("주소 : ");
+                                sb.append(p.getString("ADDR_RD"));
+                                sb.append("\n");
+                            }
+                            if (p.getString("WEBSITE").length() > 0) {
+                                sb.append("웹사이트 : ");
+                                sb.append(p.getString("WEBSITE"));
+                                sb.append("\n");
+                            }
+
+                            libSet.put(keyName, new Park(keyName, p.getString("LIB_NM"), address, sb.toString(), gu, dong, p.getInt("IDX")));
                         }
 
                         //Collections.sort(districts);
