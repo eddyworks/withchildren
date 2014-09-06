@@ -5,7 +5,9 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -106,11 +108,22 @@ public class SangsangParkListFragment extends Fragment {
         adView.loadAd(adRequest);
 
         if (parkSet.size() == 0) {
+            final SharedPreferences sp = getActivity().getSharedPreferences(
+                    "DATA", Context.MODE_PRIVATE);
+            final String dataSaved = sp.getString("DParks", "");
             getActivity().runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
-                    String data = NetHelper.SendRESTRequest(getActivity(), "http://webappwithchildren.azurewebsites.net/api/DParks");
+                    String data;
+                    if (dataSaved != null && !"".equals(dataSaved)) {
+                        data = dataSaved;
+                    } else {
+                        data = NetHelper.SendRESTRequest(getActivity(), "http://webappwithchildren.azurewebsites.net/api/DParks");
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("DParks", data);
+                        editor.commit();
+                    }
                     try {
                         JSONArray oPack = new JSONArray(data);
                         //{"ListDreamParksService":{"list_total_count":304,"RESULT":{"CODE":"INFO-000","MESSAGE":"정상 처리되었습니다"},"row":[{"P_PARK":"연지 상상어린이공원","P_LIST_CONTENT":"
