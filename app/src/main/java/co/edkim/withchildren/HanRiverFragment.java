@@ -95,7 +95,7 @@ public class HanRiverFragment extends Fragment {
 
                 iMap.addMarker(new MarkerOptions()
                         .position(sLatLng)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_park_pin)));
             }
         } catch (JSONException e) {
             e.printStackTrace();

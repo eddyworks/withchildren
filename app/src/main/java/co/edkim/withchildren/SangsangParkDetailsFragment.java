@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import com.google.android.gms.plus.PlusOneButton;
 import java.io.IOException;
 import java.util.List;
 
+import co.edkim.withchildren.helper.AdHelper;
 import co.edkim.withchildren.model.Park;
 
 /**
@@ -92,12 +94,7 @@ public class SangsangParkDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_sangsang_park_details, container, false);
 
         adView = (AdView) view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("7DDD06BDE922F9125E7B97721D387C5C").build();
-
-        // Start loading the ad in the background.
-        adView.loadAd(adRequest);
+        AdHelper.setAdmobAd(adView);
 
         map = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         GoogleMap iMap = map.getMap();
@@ -132,6 +129,7 @@ public class SangsangParkDetailsFragment extends Fragment {
             addresses = geocoder.getFromLocationName(p.address, 5);
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d("ADDR", p.address);
         }
 
         if (addresses != null && addresses.size() > 0) {
@@ -139,7 +137,7 @@ public class SangsangParkDetailsFragment extends Fragment {
 
             iMap.addMarker(new MarkerOptions()
                     .position(sLatLng)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_park_pin)).title(p.name));
 
             CameraUpdate center =
                     CameraUpdateFactory.newLatLng(sLatLng);

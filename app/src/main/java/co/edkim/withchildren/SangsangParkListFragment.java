@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import co.edkim.withchildren.helper.AdHelper;
 import co.edkim.withchildren.helper.NetHelper;
 import co.edkim.withchildren.model.Master;
 import co.edkim.withchildren.model.Park;
@@ -100,12 +101,7 @@ public class SangsangParkListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_sangsang_park_list, container, false);
 
         adView = (AdView) v.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("7DDD06BDE922F9125E7B97721D387C5C").build();
-
-        // Start loading the ad in the background.
-        adView.loadAd(adRequest);
+        AdHelper.setAdmobAd(adView);
 
         if (parkSet.size() == 0) {
             final SharedPreferences sp = getActivity().getSharedPreferences(

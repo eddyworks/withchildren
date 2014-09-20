@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 
+import co.edkim.withchildren.helper.AdHelper;
 import co.edkim.withchildren.model.Park;
 
 /**
@@ -90,12 +91,7 @@ public class ToyLibDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_toy_lib_details, container, false);
 
         adView = (AdView) view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("7DDD06BDE922F9125E7B97721D387C5C").build();
-
-        // Start loading the ad in the background.
-        adView.loadAd(adRequest);
+        AdHelper.setAdmobAd(adView);
 
         map = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         GoogleMap iMap = map.getMap();
@@ -137,7 +133,7 @@ public class ToyLibDetailsFragment extends Fragment {
 
             iMap.addMarker(new MarkerOptions()
                     .position(sLatLng)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_park_pin)).title(p.name));
 
             CameraUpdate center =
                     CameraUpdateFactory.newLatLng(sLatLng);
