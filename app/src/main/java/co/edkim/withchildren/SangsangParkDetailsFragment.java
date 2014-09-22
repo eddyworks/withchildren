@@ -1,6 +1,8 @@
 package co.edkim.withchildren;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -177,6 +179,18 @@ public class SangsangParkDetailsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        FragmentManager fm = getFragmentManager();
+        Fragment map = fm.findFragmentById(R.id.map);
+        FragmentTransaction t = fm.beginTransaction();
+        if (map != null) {
+            t.remove(map);
+            t.commit();
+        }
     }
 
     /**

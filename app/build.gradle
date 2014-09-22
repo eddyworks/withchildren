@@ -19,13 +19,13 @@ android {
         applicationId "co.edkim.withchildren"
         minSdkVersion 14
         targetSdkVersion 20
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.3"
     }
     signingConfigs {
         release {
             storeFile file("/home/stark/key/subway.jks")
-            //storeFile file("/Volumes/Data B/key/subway.jks")
+            storeFile file("/Volumes/Data B/key/subway.jks")
             storePassword "k10208"
             keyAlias "Subway Exit"
             keyPassword "k10208"
